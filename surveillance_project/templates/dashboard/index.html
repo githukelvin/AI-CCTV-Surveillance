@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Surveillance Dashboard</h2>
+    <div class="row">
+        <div class="col-md-8">
+
+
+            <h3>Active Cameras</h3>
+            <div class="row">
+                {% for camera in cameras %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ camera.name }}</h5>
+                            <p class="card-text">{{ camera.location }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Recent Alerts</h3>
+            {% for alert in recent_alerts %}
+            <div class="alert alert-warning">
+                {{ alert.threat_type }} - {{ alert.timestamp|date:"M d, Y H:i" }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

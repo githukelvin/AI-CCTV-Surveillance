@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Filter Form -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Filter Alerts</h5>
+                    <form method="get" action="{% url 'filter_alerts' %}">
+                        <div class="mb-3">
+                            <label class="form-label">Threat Type</label>
+                            <select class="form-select" name="threat_type">
+                                <option value="">All</option>
+                                {% for type, label in threat_types %}
+                                    <option value="{{ type }}" {% if type == selected_threat %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts List -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Alerts</h5>
+                    {% if alerts %}
+                        <div class="list-group">
+                            {% for alert in alerts %}
+                                <div class="list-group-item">
+                                    <div class="d-flex align-items-start">
+                                        {% if alert.image %}
+                                            <img src="{{ alert.image.url }}" 
+                                                 class="img-thumbnail me-3" 
+                                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                                 alt="Alert image">
+                                        {% endif %}
+                                        <div class="flex-grow-1">
+                                            <h6>{{ alert.get_threat_type_display }}</h6>
+                                            <p class="mb-1">Camera: {{ alert.camera.name }}</p>
+                                            <p class="mb-1">Confidence: {{ alert.confidence|floatformat:2 }}%</p>
+                                            <small class="text-muted">
+                                                {{ alert.timestamp|date:"F j, Y, g:i a" }}
+                                            </small>
+                                            {% if alert.notes %}
+                                                <p class="mt-2 mb-0">{{ alert.notes }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">No alerts found matching the filters.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.list-group-item {
+    border-left: 4px solid #007bff;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+.img-thumbnail {
+    border: 2px solid #ddd;
+}
+</style>
+{% endblock %}

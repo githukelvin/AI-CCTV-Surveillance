@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Alert History</h2>
+{{ Alert }}
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Filter Alerts</h5>
+                    <form method="get">
+                        <div class="mb-3">
+                         <label class="form-label">Threat Type</label>
+                        <select class="form-select" name="threat_type">
+                            <option value="">All</option>
+                            {% for type, label in threat_types %}
+                                <option value="{{ type }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Camera</label>
+                            <select class="form-select" name="camera">
+                                <option value="">All</option>
+                                {% for camera in cameras %}
+                                <option value="{{ camera.id }}">{{ camera.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+<!--                        <button type="submit" class="btn btn-primary">Apply Filters</button>-->
+                           <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            {% if request.GET %}
+                                <a href="{% url 'filter_alerts' %}" class="btn btn-outline-secondary">Clear Filters</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% for alert in alerts %}
+            {{alert}}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if alert.image %}
+                            <img src="{{ alert.image.url }}" class="img-fluid rounded" alt="Alert Image">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="card-title">{{ alert.get_threat_type_display }}</h5>
+                            <p class="card-text">
+<!--                                <strong>Frame:</strong> {{ alert.timestamp_vid }}<br>-->
+                                <strong>Time:</strong> {{ alert.timestamp}}<br>
+                                <strong>Frame Time:</strong> {{ alert}}<br>
+                                <strong>Confidence:</strong> {{ alert.confidence|floatformat:2 }}%
+                            </p>
+                            {% if alert.video_clip %}
+                            <a href="{{ alert.video_clip.url }}" class="btn btn-sm btn-primary">View Clip</a>
+                            {% endif %}
+                            {% if not alert.is_reviewed %}
+                            <button class="btn btn-sm btn-warning">Mark as Reviewed</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">No alerts found.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

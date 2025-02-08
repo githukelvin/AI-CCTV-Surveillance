@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Analysis Results</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <video controls class="w-100">
+                <source src="{{ video_path }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+      <div class="col-md-6">
+    {{ video_path }}
+    <h3>Detected Events</h3>
+    <div class="list-group">
+        {% for result in results %}
+            {% if result.prediction.class_name != 'normal' %}
+                <div class="list-group-item">
+                    <h5>Frame {{ result.frame_number }}</h5>
+                    <p>Event: {{ result.prediction.class_name }}</p
+                    <strong>Time:</strong> {{ result.prediction.timestamp_vid}}<br>
+                    <p>Confidence: {{ result.prediction.confidence|floatformat:2 }}%</p>
+                    <div class="top-probabilities">
+                        <p class="mb-1">Top Predictions:</p>
+                        <ul class="list-unstyled">
+                            {% for prob in result.prediction.top_probabilities %}
+                                <li class="ms-3">
+                                    {{ prob.label }}: {{ prob.probability|floatformat:2 }}%
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+    </div>
+</div>
+{% endblock %}
